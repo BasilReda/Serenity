@@ -1,1 +1,11 @@
 pandas
+torch
+torchvision
+datasets
+transformers
+scikit-learn
+accelerate
+bitsandbytes
+setfit
+peft
+loralib
