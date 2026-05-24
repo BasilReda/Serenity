@@ -5,3 +5,4 @@ final_peft_teacher_model/
 many_to_one_translator/
 language_classifier/
 emotion_model/
+embedding/
