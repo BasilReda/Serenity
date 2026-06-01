@@ -1,0 +1,48 @@
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    # ── Model Paths ───────────────────────────────────────────
+    DPO_CHECKPOINT: str   = r"E:\vs codes\gemma_model\Qwen2.5-0.5B-Instruct-DPO\checkpoint-1185"
+    EMOTION_MODEL: str    = r"E:\vs codes\nlp_project\embedding\cross_encoder_model"
+    LANGUAGE_MODEL: str   = r"E:\vs codes\nlp_project\language_classifier"
+    DENSE_ENCODER: str    = r"E:\vs codes\nlp_project\embedding\dense_encoder_model"
+    SPARSE_ENCODER: str   = r"E:\vs codes\nlp_project\embedding\sparse_encoder_model.json"
+    CROSS_ENCODER: str    = r"E:\vs codes\nlp_project\embedding\cross_encoder_model"
+    TRANSLATOR_MODEL: str = r"E:\vs codes\nlp_project\many_to_one_translator"
+
+    # ── Pinecone ──────────────────────────────────────────────
+    PINECONE_API_KEY: str    = ""
+    PINECONE_INDEX_NAME: str = "mental-health"
+    PINECONE_DIMENSION: int  = 384
+    PINECONE_METRIC: str     = "dotproduct"
+
+    # ── RAG Tuning ────────────────────────────────────────────
+    RAG_TOP_K: int            = 20
+    RERANKER_TOP_K: int       = 5
+    RELEVANCE_THRESHOLD: float = 0.7
+    MAX_REWRITE_ATTEMPTS: int  = 2
+
+    # ── External API Keys (read from .env, optional) ──────────
+    GEMINI_API_KEY: str  = ""
+    HF_API_KEY: str      = ""
+    OPENAI_API_KEY: str  = ""
+
+    # ── LangSmith (read from .env, optional) ──────────────────
+    LANGSMITH_TRACING: str  = ""
+    LANGSMITH_ENDPOINT: str = ""
+    LANGSMITH_API_KEY: str  = ""
+    LANGSMITH_PROJECT: str  = ""
+
+    # ── FastAPI ───────────────────────────────────────────────
+    APP_TITLE: str = "PsyNet Assistant"
+    APP_HOST: str  = "127.0.0.1"
+    APP_PORT: int  = 8000
+
+    class Config:
+        env_file     = ".env"
+        extra        = "ignore"   # ← silently ignores any .env key not declared above
+        case_sensitive = False    # ← gemini_api_key and GEMINI_API_KEY both match
+
+
+settings = Settings()

@@ -6,3 +6,7 @@ many_to_one_translator/
 language_classifier/
 emotion_model/
 embedding/
+*/__pycache__/
+*/*/__pycache__
+__pycache__/
+*.json
