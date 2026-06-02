@@ -2,7 +2,7 @@ from agents.state import ChatbotState, InputGuardrailResult, OutputGuardrailResu
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage
-from ml.llm import get_global_llm
+from ml.llm import get_groq_model
 import json
 
 # ── POC: these fire only on the most obvious clear-cut cases ─────────────────
@@ -51,7 +51,7 @@ Output ONLY raw JSON. No markdown. Default to safe=True if unsure."""
     chain = ChatPromptTemplate.from_messages([
         ("system", sys_prompt),
         ("human", "{text}\n\n{format_instructions}"),
-    ]) | get_global_llm()
+    ]) | get_groq_model()
 
     raw      = chain.invoke({"text": text, "format_instructions": parser.get_format_instructions()})
     text_out = (raw if isinstance(raw, str) else raw.content).replace("```json", "").replace("```", "").strip()
@@ -116,7 +116,7 @@ Output ONLY raw JSON. Default to safe=True if unsure."""
     chain = ChatPromptTemplate.from_messages([
         ("system", sys_prompt),
         ("human", "Response to review:\n{response}\n\n{format_instructions}"),
-    ]) | get_global_llm()
+    ]) | get_groq_model()
 
     raw      = chain.invoke({"response": response, "format_instructions": parser.get_format_instructions()})
     text_out = (raw if isinstance(raw, str) else raw.content).replace("```json", "").replace("```", "").strip()

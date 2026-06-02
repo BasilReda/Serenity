@@ -21,7 +21,7 @@ const NODE_MAP = {
   query_rewrite:           'step-retrieval',
   mental_health_chatbot:   'step-generate',
   general_handler:         'step-generate',
-  output_guardrail:        'step-guardrail-out',
+  // output_guardrail:        'step-guardrail-out',
 };
 
 /* ── Pipeline helpers ────────────────────────────────────────────────────── */

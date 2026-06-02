@@ -4,6 +4,8 @@ from core.config import settings
 import torch
 import os
 from dotenv import load_dotenv
+from langchain_groq  import ChatGroq
+
 
 load_dotenv()
 def get_chat_model_hf():
@@ -52,3 +54,11 @@ def get_dpo_model() -> ChatHuggingFace:
         print("[LLM] Loading DPO local model...")
         _dpo_model = get_chat_dpo_local()
     return _dpo_model
+
+def get_groq_model() -> ChatGroq:
+    return ChatGroq(
+    model="openai/gpt-oss-20b",
+    temperature=0.7,
+    api_key=settings.GROQ_API_KEY,
+    max_tokens=128,
+    )

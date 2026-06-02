@@ -1,7 +1,7 @@
 from agents.state import ChatbotState
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
-from ml.llm import get_dpo_model
+from ml.llm import get_groq_model
 
 def reset_per_turn_state(state: ChatbotState) -> dict:
     print("--> [NODE] Executing: reset_per_turn_state")
@@ -38,7 +38,7 @@ You are an empathetic, evidence-based wellness and support assistant. Warm, vali
         MessagesPlaceholder(variable_name="recent_history"),
         ("human", "Retrieved Context:\n{context}\n\nUser Query: {question}\n\n[RESPOND ENTIRELY IN {language}]"),
     ])
-    response   = (prompt | get_dpo_model()).invoke({
+    response   = (prompt | get_groq_model()).invoke({
         "context": context_str, "recent_history": recent_history,
         "question": current_question, "language": target_language})
     final_text = response if isinstance(response, str) else response.content
@@ -46,6 +46,7 @@ You are an empathetic, evidence-based wellness and support assistant. Warm, vali
         "history_messages": [HumanMessage(content=current_question), AIMessage(content=final_text)],
         "final_response":   final_text,
         "status_update":    [f"Response drafted in {target_language}."],
+        "is_final": True,
     }
 
 def general_handler(state: ChatbotState) -> dict:
@@ -62,7 +63,7 @@ CRITICAL: Respond in {language}."""),
         MessagesPlaceholder(variable_name="recent_history"),
         ("human", "{question}"),
     ])
-    response   = (prompt | get_dpo_model()).invoke({
+    response   = (prompt | get_groq_model()).invoke({
         "question": current_question, "language": target_language,
         "recent_history": recent_history})
     final_text = response if isinstance(response, str) else response.content
@@ -70,4 +71,5 @@ CRITICAL: Respond in {language}."""),
         "history_messages": [HumanMessage(content=current_question), AIMessage(content=final_text)],
         "final_response":   final_text,
         "status_update":    ["Handled as general message."],
+        "is_final": True,
     }

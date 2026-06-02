@@ -39,8 +39,9 @@ def detect_emotion(text: str) -> Dict[str, Any]:
 def detect_language(text: str) -> Dict[str, Any]:
     if not text or not text.strip():
         return {"language": "unknown", "score": 1.0}
-    result = _get_lang_clf()(text)[0]
-    return {"language": result["label"], "score": round(result["score"], 4)}
+    # result = _get_lang_clf()(text)[0]
+    # return {"language": result["label"], "score": round(result["score"], 4)}
+    return {"language": "en", "score": 1.0}  # Placeholder: Assume English for now
 
 class _IntentSchema(BaseModel):
     intent:     str   = Field(..., description="Detected intent.")
@@ -61,8 +62,8 @@ Example: {{"intent": "greeting", "confidence": 0.98}}"""),
 ])
 
 def intent_user(text: str) -> dict:
-    from ml.llm import get_global_llm
-    chain = (_intent_prompt | get_global_llm() | _intent_parser).with_retry(
+    from ml.llm import get_groq_model
+    chain = (_intent_prompt | get_groq_model() | _intent_parser).with_retry(
         stop_after_attempt=3, wait_exponential_jitter=True)
     try:
         result = chain.invoke({

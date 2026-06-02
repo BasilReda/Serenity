@@ -5,13 +5,16 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # ── Model Paths ───────────────────────────────────────────
-    DPO_CHECKPOINT: str   = r"E:\vs codes\gemma_model\Qwen2.5-0.5B-Instruct-DPO\checkpoint-1185"
-    EMOTION_MODEL: str    = r"E:\vs codes\nlp_project\embedding\cross_encoder_model"
-    LANGUAGE_MODEL: str   = r"E:\vs codes\nlp_project\language_classifier"
-    DENSE_ENCODER: str    = r"E:\vs codes\nlp_project\embedding\dense_encoder_model"
-    SPARSE_ENCODER: str   = r"E:\vs codes\nlp_project\embedding\sparse_encoder_model.json"
-    CROSS_ENCODER: str    = r"E:\vs codes\nlp_project\embedding\cross_encoder_model"
-    TRANSLATOR_MODEL: str = r"E:\vs codes\nlp_project\many_to_one_translator"
+    DPO_CHECKPOINT: str   = "E:\vs codes\gemma_model\Qwen2.5-0.5B-Instruct-DPO\checkpoint-1185"
+    EMOTION_MODEL: str    = ""
+    LANGUAGE_MODEL: str   = ""
+    DENSE_ENCODER: str    = ""
+    SPARSE_ENCODER: str   = ""
+    CROSS_ENCODER: str    = ""
+    TRANSLATOR_MODEL: str = ""
+
+    # ── LLM Keys ──────────────────────────────────────────────
+    GROQ_API_KEY: str = ""
 
     # ── Emotion Model ──────────────────────────────────────────────
     BERT_EMOTION_MODEL_NAME: str = "albert/albert-base-v2"
@@ -44,7 +47,7 @@ class Settings(BaseSettings):
     APP_HOST: str  = "127.0.0.1"
     APP_PORT: int  = 8000
 
-    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+    DEVICE: str = "cuda" if torch.cuda.is_available() else "cpu"
 
     class Config:
         env_file     = ".env"
