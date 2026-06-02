@@ -4,18 +4,20 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from core.config import settings
 from typing import Dict, Any
+from transformers import AutoTokenizer
+from .emotion import EmotionPredict,EmotionModel
+import torch
 
-_emotion_clf = None
 _lang_clf    = None
 
 def _get_emotion_clf():
-    global _emotion_clf
-    if _emotion_clf is None:
-        print("[ML] Loading emotion classifier...")
-        _emotion_clf = hf_pipeline("text-classification",
-                                    model=settings.EMOTION_MODEL,
-                                    return_all_scores=False)
-    return _emotion_clf
+
+    emotion_tokenizer = AutoTokenizer.from_pretrained(settings.BERT_EMOTION_MODEL)
+    emotion_model     = EmotionModel(model_name = settings.BERT_EMOTION_MODEL)
+    emotion_checkpoint = torch.load(settings.EMOTION_MODEL, map_location = settings.DEVICE, weights_only=False)
+    emotion_model.load_state_dict(emotion_checkpoint["model_state_dict"])
+
+    return emotion_model, emotion_tokenizer
 
 def _get_lang_clf():
     global _lang_clf
@@ -29,8 +31,10 @@ def _get_lang_clf():
 def detect_emotion(text: str) -> Dict[str, Any]:
     if not text or not text.strip():
         return {"emotion": "neutral", "score": 1.0}
-    result = _get_emotion_clf()(text)[0]
-    return {"emotion": result["label"], "score": result["score"]}
+    emotion_model, emotion_tokenizer = _get_emotion_clf()
+    predictor = EmotionPredict(emotion_model, emotion_tokenizer, device=settings.DEVICE)
+    result = predictor(text)
+    return {"emotion": result["label"], "score": result["confidence"]}
 
 def detect_language(text: str) -> Dict[str, Any]:
     if not text or not text.strip():

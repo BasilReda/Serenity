@@ -1,3 +1,5 @@
+import torch
+
 from pydantic_settings import BaseSettings
 
 
@@ -10,6 +12,9 @@ class Settings(BaseSettings):
     SPARSE_ENCODER: str   = r"E:\vs codes\nlp_project\embedding\sparse_encoder_model.json"
     CROSS_ENCODER: str    = r"E:\vs codes\nlp_project\embedding\cross_encoder_model"
     TRANSLATOR_MODEL: str = r"E:\vs codes\nlp_project\many_to_one_translator"
+
+    # ── Emotion Model ──────────────────────────────────────────────
+    BERT_EMOTION_MODEL_NAME: str = "albert/albert-base-v2"
 
     # ── Pinecone ──────────────────────────────────────────────
     PINECONE_API_KEY: str    = ""
@@ -38,6 +43,8 @@ class Settings(BaseSettings):
     APP_TITLE: str = "PsyNet Assistant"
     APP_HOST: str  = "127.0.0.1"
     APP_PORT: int  = 8000
+
+    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
     class Config:
         env_file     = ".env"
