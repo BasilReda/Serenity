@@ -1,0 +1,238 @@
+:root {
+    /* ألوان مستوحاة من هويّة Gemini اللمسية والحديثة */
+    --body-bg: #0b0d11;
+    --app-bg: #13161c;
+    --card-bg: #1e212a;
+    --primary-gradient: linear-gradient(135deg, #4285f4, #9b51e0, #e91e63);
+    --text-main: #e3e3e3;
+    --text-muted: #9aa0a6;
+    --border-color: #2e3138;
+    
+    /* ألوان الرسائل */
+    --user-msg-bg: #2b394a;
+    --user-msg-text: #e3f2fd;
+    --bot-msg-bg: transparent; /* Gemini style: البوت ملوش خلفية حادة */
+    
+    --input-bg: #1e212a;
+    --accent-glow: rgba(155, 81, 224, 0.15);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* حاوية التطبيق بالكامل */
+.app-container {
+    width: 100%;
+    max-width: 850px; /* وسعنا الشاشة شوية زي Gemini */
+    height: 92vh;
+    background: var(--app-bg);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 40px var(--accent-glow);
+}
+
+/* الـ Header العلوي - ناعم وبسيط وبدون ألوان حادة */
+.app-header {
+    background: transparent;
+    padding: 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+}
+
+.app-header h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    /* تأثير الكتابة الملونة لـ Gemini Gradient */
+    background: linear-gradient(90deg, #66a6ff, #bd7eff, #ea7999);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.app-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.header-status {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: #1e212a;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.status-dot.online { 
+    background-color: #00e676; 
+    box-shadow: 0 0 8px #00e676;
+}
+
+.chat-area {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    scroll-behavior: smooth;
+}
+
+.chat-area::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-area::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-area::-webkit-scrollbar-thumb {
+    background: #2e3138;
+    border-radius: 10px;
+}
+
+.message {
+    display: flex;
+    max-width: 85%;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.message-content {
+    padding: 14px 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    letter-spacing: 0.2px;
+}
+
+.user-message {
+    margin-left: auto;
+}
+.user-message .message-content {
+    background-color: var(--user-msg-bg);
+    color: var(--user-msg-text);
+    border-radius: 22px 22px 4px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bot-message {
+    margin-right: auto;
+    width: 100%; 
+}
+.bot-message .message-content {
+    background-color: var(--bot-msg-bg);
+    color: var(--text-main);
+    padding-left: 0; 
+}
+
+.pipeline-status-bar {
+    padding: 12px 30px;
+    background: rgba(30, 33, 42, 0.6);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: #66a6ff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.pipeline-status-bar i {
+    color: #9b51e0;
+}
+
+.input-area {
+    padding: 24px 30px 30px 30px;
+    background: transparent;
+}
+
+.input-container {
+    display: flex;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 28px; 
+    padding: 6px 10px 6px 18px;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.input-container:focus-within {
+    border-color: #9b51e0;
+    box-shadow: 0 0 15px rgba(155, 81, 224, 0.2);
+}
+
+.input-container input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 0;
+    font-size: 1rem;
+    color: var(--text-main);
+    outline: none;
+}
+
+.input-container input::placeholder {
+    color: #5f6368;
+}
+
+.input-container button {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.input-container button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(155, 81, 224, 0.5);
+}
+
+.input-container button i {
+    font-size: 0.95rem;
+    margin-left: -2px; 
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
