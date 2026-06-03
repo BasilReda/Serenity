@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mental Health Companion</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-status">
+                <div class="status-dot online"></div>
+                <span>Secure & Private Session</span>
+            </div>
+            <h1><i class="fa-solid fa-brain-circuit"></i> MindEase AI</h1>
+            <p>Your Empathetic Mental Health Assistant</p>
+        </header>
+
+        <main class="chat-area" id="chatArea">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hello! I'm here to listen without judgment. How are you feeling today? You can share whatever is on your mind.
+                </div>
+            </div>
+        </main>
+
+        <div class="pipeline-status-bar" id="pipelineStatusBar" style="display: none;">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> <span id="statusText">Processing...</span>
+        </div>
+
+        <footer class="input-area">
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Share your thoughts or ask a question..." autocomplete="off">
+                <button id="sendBtn" title="Send Message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/chat.js"></script>
+</body>
+</html>
