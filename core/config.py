@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # ── Model Paths ───────────────────────────────────────────
     EMOTION_MODEL: str    = "checkpoints/best_model_albert.pth"
-    LANGUAGE_MODEL: str   = "checkpoints/language_classifier"
+    LANGUAGE_MODEL: str   = "checkpoints/lid.176.ftz"
     DENSE_ENCODER: str    = "checkpoints/embedding/dense_encoder_model"
     SPARSE_ENCODER: str   = "checkpoints/embedding/sparse_encoder_model.json"
     CROSS_ENCODER: str    = "checkpoints/embedding/cross_encoder_model"

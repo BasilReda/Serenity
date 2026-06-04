@@ -37,12 +37,24 @@ def detect_emotion(text: str) -> Dict[str, Any]:
     result = predictor.predict(text)
     return {"emotion": result["label"], "score": result["confidence"]}
 
-def detect_language(text: str) -> Dict[str, Any]:
-    if not text or not text.strip():
-        return {"language": "unknown", "score": 1.0}
-    result = _get_lang_clf()(text)[0]
-    return {"language": result["label"], "score": round(result["score"], 4)}
+# def detect_language(text: str) -> Dict[str, Any]:
+#     if not text or not text.strip():
+#         return {"language": "unknown", "score": 1.0}
+#     result = _get_lang_clf()(text)[0]
+#     return {"language": result["label"], "score": round(result["score"], 4)}
 
+def detect_language(text: str):
+    ftz_model = fasttext.load_model(settings.LANGUAGE_MODEL)
+    labels, scores = ftz_model.predict(text)
+
+    language = labels[0].replace("__label__", "")
+
+    print(
+        f"Text: {text}\n"
+        f"Language: {language}\n"
+        f"Confidence: {scores[0]:.4f}\n"
+    )
+    return {"language": language, "score": round(scores[0], 4)}
 
 class _IntentSchema(BaseModel):
     intent:     str   = Field(..., description="Detected intent.")
