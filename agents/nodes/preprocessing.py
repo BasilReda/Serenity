@@ -16,7 +16,7 @@ def language_detection_node(state: ChatbotState) -> dict:
     info       = detect_language(user_input)
     code, conf = info["language"], info["score"]
     words      = len(user_input.strip().split())
-    if words <= 2 or conf < 0.85:
+    if words < 1:
         lang = "English"
         msg  = f"Defaulting to English — words: {words}, confidence: {conf:.2f}"
     else:

@@ -7,10 +7,11 @@ class Settings(BaseSettings):
     # ── Model Paths ───────────────────────────────────────────
     EMOTION_MODEL: str    = "checkpoints/best_model_albert.pth"
     LANGUAGE_MODEL: str   = "checkpoints/lid.176.ftz"
-    DENSE_ENCODER: str    = "checkpoints/embedding/dense_encoder_model"
-    SPARSE_ENCODER: str   = "checkpoints/embedding/sparse_encoder_model.json"
-    CROSS_ENCODER: str    = "checkpoints/embedding/cross_encoder_model"
-    TRANSLATOR_MODEL: str = "checkpoints/many_to_one_translator"
+    DENSE_ENCODER: str    = "checkpoints\dense_encoder_model"
+    SPARSE_ENCODER: str   = "checkpoints\sparse_encoder_model.json"
+    CROSS_ENCODER: str    = "checkpoints\cross_encoder_model"
+    TRANSLATOR_MODEL: str = "checkpoints\many_to_one_translator"
+    DPO_CHECKPOINT: str   = "checkpoints/Qwen2.5-0.5B-Instruct-DPO/checkpoint-1185"
 
     # ── LLM Keys ──────────────────────────────────────────────
     GROQ_API_KEY: str = ""
