@@ -15,6 +15,48 @@ _dense_enc, _sparse_enc = get_encoders()
 hybrid_retriever = setup_hybrid_retriever(_dense_enc, _sparse_enc)
 print("[GRAPH] RAG resources ready.")
 
+# def build_graph():
+#     graph = StateGraph(ChatbotState)
+#     graph.add_node("reset_per_turn_state",   reset_per_turn_state)
+#     graph.add_node("language_detector",      language_detection_node)
+#     graph.add_node("translate_to_english",   translate_to_english_node)
+#     graph.add_node("emotion_detector",       emotion_detection_node)
+#     graph.add_node("input_guardrail",        input_guardrail_node)
+#     graph.add_node("intent_detector",        intent_detection_node)
+#     graph.add_node("query_classifier_agent", query_classifier_agent)
+#     graph.add_node("HyDE",                   HyDE)
+#     graph.add_node("RAG",                    RAG)
+#     graph.add_node("ReRanker",               ReRanker)
+#     graph.add_node("grade_document",         grade_document)
+#     graph.add_node("query_rewrite",          query_rewrite)
+#     graph.add_node("mental_health_chatbot",  mental_health_chatbot)
+#     graph.add_node("general_handler",        general_handler)
+#     graph.add_node("output_guardrail",       output_guardrail_node)
+
+#     graph.add_edge(START, "reset_per_turn_state")
+#     graph.add_edge("reset_per_turn_state", "language_detector")
+#     graph.add_conditional_edges("language_detector", is_language_english,
+#         {"english": "emotion_detector", "not english": "translate_to_english"})
+#     graph.add_edge("translate_to_english", "emotion_detector")
+#     graph.add_edge("emotion_detector",     "input_guardrail")
+#     graph.add_conditional_edges("input_guardrail", input_guardrail_router,
+#         {"safe": "intent_detector", "blocked": "output_guardrail"})
+#     graph.add_conditional_edges("intent_detector", intent_router,
+#         {"mental_health": "query_classifier_agent", "general": "general_handler"})
+#     graph.add_conditional_edges("query_classifier_agent", complexity_router,
+#         {"complex_path": "HyDE", "simple_path": "mental_health_chatbot"})
+#     graph.add_edge("HyDE",     "RAG")
+#     graph.add_edge("RAG",      "ReRanker")
+#     graph.add_edge("ReRanker", "grade_document")
+#     graph.add_conditional_edges("grade_document", check_relevance,
+#         {"generate": "mental_health_chatbot", "rewrite": "query_rewrite"})
+#     graph.add_edge("query_rewrite",         "RAG")
+#     graph.add_edge("mental_health_chatbot", "output_guardrail")
+#     graph.add_edge("general_handler",       "output_guardrail")
+#     graph.add_edge("output_guardrail",      END)
+#     return graph.compile(checkpointer=MemorySaver())
+
+
 def build_graph():
     graph = StateGraph(ChatbotState)
     graph.add_node("reset_per_turn_state",   reset_per_turn_state)
@@ -24,14 +66,14 @@ def build_graph():
     graph.add_node("input_guardrail",        input_guardrail_node)
     graph.add_node("intent_detector",        intent_detection_node)
     graph.add_node("query_classifier_agent", query_classifier_agent)
-    graph.add_node("HyDE",                   HyDE)
+    # Node "HyDE" removed
     graph.add_node("RAG",                    RAG)
     graph.add_node("ReRanker",               ReRanker)
     graph.add_node("grade_document",         grade_document)
     graph.add_node("query_rewrite",          query_rewrite)
     graph.add_node("mental_health_chatbot",  mental_health_chatbot)
     graph.add_node("general_handler",        general_handler)
-    graph.add_node("output_guardrail",       output_guardrail_node)
+    # Node "output_guardrail" removed
 
     graph.add_edge(START, "reset_per_turn_state")
     graph.add_edge("reset_per_turn_state", "language_detector")
@@ -39,22 +81,31 @@ def build_graph():
         {"english": "emotion_detector", "not english": "translate_to_english"})
     graph.add_edge("translate_to_english", "emotion_detector")
     graph.add_edge("emotion_detector",     "input_guardrail")
+    
+    # Input guardrail blocked path now goes directly to END
     graph.add_conditional_edges("input_guardrail", input_guardrail_router,
-        {"safe": "intent_detector", "blocked": "output_guardrail"})
+        {"safe": "intent_detector", "blocked": END})
+        
     graph.add_conditional_edges("intent_detector", intent_router,
         {"mental_health": "query_classifier_agent", "general": "general_handler"})
+        
+    # complex_path now points directly to RAG instead of HyDE
     graph.add_conditional_edges("query_classifier_agent", complexity_router,
-        {"complex_path": "HyDE", "simple_path": "mental_health_chatbot"})
-    graph.add_edge("HyDE",     "RAG")
+        {"complex_path": "RAG", "simple_path": "mental_health_chatbot"})
+        
+    # Removed graph.add_edge("HyDE", "RAG")
     graph.add_edge("RAG",      "ReRanker")
     graph.add_edge("ReRanker", "grade_document")
     graph.add_conditional_edges("grade_document", check_relevance,
         {"generate": "mental_health_chatbot", "rewrite": "query_rewrite"})
     graph.add_edge("query_rewrite",         "RAG")
-    graph.add_edge("mental_health_chatbot", "output_guardrail")
-    graph.add_edge("general_handler",       "output_guardrail")
-    graph.add_edge("output_guardrail",      END)
+    
+    # Chatbots now route directly to END
+    graph.add_edge("mental_health_chatbot", END)
+    graph.add_edge("general_handler",       END)
+    
     return graph.compile(checkpointer=MemorySaver())
+
 
 chatbot_app = build_graph()
 chatbot_app

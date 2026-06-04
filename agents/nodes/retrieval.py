@@ -3,7 +3,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.exceptions import OutputParserException
 from langchain_core.documents import Document
-from ml.llm import get_global_llm, get_dpo_model
+from ml.llm import get_groq_model
 from core.config import settings
 import json
 
@@ -17,7 +17,7 @@ Generate TWO distinct theoretical ideal clinical responses to the patient query.
 Output strictly raw JSON starting with {{ and ending with }}."""
     chain = ChatPromptTemplate.from_messages([
         ("system", sys_prompt), ("human", "{question}")
-    ]) | get_global_llm()
+    ]) | get_groq_model()
     raw = chain.invoke({"question": query, "format_instructions": parser.get_format_instructions()})
     if hasattr(raw, "response_metadata"):
         if raw.response_metadata.get("finish_reason") in ("content_filter","safety","recitation"):
@@ -83,7 +83,7 @@ Output strictly raw JSON: {{"score": 0.8, "missing_info_feedback": "..."}}"""
     chain = ChatPromptTemplate.from_messages([
         ("system", sys_prompt),
         ("human", "Question: {question}\n\nDocuments:\n{context}\n\n{format_instructions}"),
-    ]) | get_global_llm()
+    ]) | get_groq_model()
     raw  = chain.invoke({"question": question, "context": "\n\n".join(docs),
                           "format_instructions": parser.get_format_instructions()})
     text = (raw if isinstance(raw, str) else raw.content).replace("```json","").replace("```","").strip()
@@ -122,7 +122,7 @@ Output strictly raw JSON: {{"search_query": "..."}}"""
     chain = ChatPromptTemplate.from_messages([
         ("system", sys_prompt),
         ("human", "Original: {question}\nMissing: {missing}\n\n{format_instructions}"),
-    ]) | get_dpo_model()
+    ]) | get_groq_model()
     raw  = chain.invoke({"question": original, "missing": missing_info,
                           "format_instructions": parser.get_format_instructions()})
     text = (raw if isinstance(raw, str) else raw.content)

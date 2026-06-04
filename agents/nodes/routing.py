@@ -3,7 +3,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.exceptions import OutputParserException
 from ml.classifiers import intent_user
-from ml.llm import get_global_llm
+from ml.llm import get_groq_model
 import json
 
 def intent_detection_node(state: ChatbotState) -> dict:
@@ -33,7 +33,7 @@ Output ONLY raw JSON: {{"reasoning": "...", "level": "simple|complex"}}"""
     chain = ChatPromptTemplate.from_messages([
         ("system", sys_prompt),
         ("human", "Query: {query}\n\n{format_instructions}"),
-    ]) | get_global_llm()
+    ]) | get_groq_model()
     raw  = chain.invoke({"query": query, "format_instructions": parser.get_format_instructions()})
     text = (raw if isinstance(raw, str) else raw.content)
     try:
