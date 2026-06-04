@@ -40,6 +40,9 @@ async function sendMessage() {
     const botMessageDiv = document.getElementById(botMessageId);
     const botContentDiv = document.getElementById(`${botMessageId}-content`);
 
+    // تهيئة مجمع النص لـ Markdown لتجنب مشاكل الرندر أثناء الـ Streaming
+    botContentDiv.markdownAcc = '';
+
     try {
         const response = await fetch('/chat/stream', {
             method: 'POST',
@@ -54,6 +57,14 @@ async function sendMessage() {
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
+
+        // تأمين وجود المكتبة وضبط إعداداتها
+        if (typeof marked !== 'undefined') {
+            marked.setOptions({
+                breaks: true,
+                gfm: true
+            });
+        }
 
         while (true) {
             const { value, done } = await reader.read();
@@ -76,15 +87,35 @@ async function sendMessage() {
                             statusText.innerText = formatStatusMessage(packet.node, packet.emotion);
                         }
 
-                        // معالجة الـ Tokens (الطباعة الحية الحقيقية المنسابة)
+                        // معالجة الـ Tokens (الطباعة الحية المنسابة)
                         if (packet.type === 'token') {
                             statusBar.style.display = 'none'; 
                             if (botMessageDiv.style.display === 'none') {
                                 botMessageDiv.style.display = 'flex';
                             }
                             
-                            // السيرفر متفلتر وجاهز، بنطبع الحروف فوراً هنا بسلاسة
-                            botContentDiv.innerText += packet.data;
+                            // 1. تجمع التوكنز الحية
+                            botContentDiv.markdownAcc += packet.data;
+                            
+                            // 2. ريجكس صارم جداً لتنظيف السطور العربية المكسورة والشرط العشوائية
+                            let cleanedText = botContentDiv.markdownAcc
+                                .replace(/(?:\r\n|\r|\n|^)[ \t]*[ـ\-*][ \t]+/g, '\n- ') // ضبط بداية الشرط والشرطات الطائرة
+                                .replace(/([^\n])\n-[ \t]+/g, '$1\n\n- '); // التأكد من وجود سطر فارغ قبل القائمة ليقرأها الماركد
+
+                            // 3. الرندرة (مع خط دفاع ميكانيكي لو السيرفر مش لاقط المكتبة)
+                            if (typeof marked !== 'undefined') {
+                                botContentDiv.innerHTML = marked.parse(cleanedText);
+                            } else {
+                                // خط دفاع يدوي فوري يحول الشرط لـ HTML في حال غياب المكتبة كاش
+                                let fallbackHtml = cleanedText
+                                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                    .replace(/^- (.*)$/gm, '<ul><li>$1</li></ul>')
+                                    .replace(/\n/g, '<br>');
+                                // دمج الـ <ul> المتتالية
+                                fallbackHtml = fallbackHtml.replace(/<\/ul><br><ul>/g, '').replace(/<\/ul><ul>/g, '');
+                                botContentDiv.innerHTML = fallbackHtml;
+                            }
+                            
                             chatArea.scrollTop = chatArea.scrollHeight;
                         }
 
@@ -110,7 +141,6 @@ async function sendMessage() {
     }
 }
 
-// دالة تنسيق الرسائل التوضيحية لخطوات الـ Pipeline
 function formatStatusMessage(node, emotion) {
     const mapping = {
         'detect_language': 'Recognizing input language...',
@@ -125,7 +155,6 @@ function formatStatusMessage(node, emotion) {
     return mapping[node] || `Processing stage: ${node}...`;
 }
 
-// حماية الـ XSS عند طباعة مدخلات المستخدم
 function escapeHtml(text) {
     return text
         .replace(/&/g, "&amp;")
