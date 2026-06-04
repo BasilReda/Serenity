@@ -51,7 +51,7 @@ You are an empathetic, evidence-based wellness and support assistant. Warm, vali
 
 def general_handler(state: ChatbotState) -> dict:
     print("--> [NODE] Executing: general_handler")
-    current_question = state.get("translated_query", state["user_input"])
+    current_question = state.get("translated_query") or state["user_input"]
     target_language  = state.get("detect_language", "English")
     recent_history   = state.get("history_messages", [])[-4:]
 

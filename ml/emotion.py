@@ -43,8 +43,10 @@ class EmotionModel(nn.Module):
 class EmotionPredict:
     def __init__(self, model, tokenizer, device="cuda"):
         self.emotion_model     = model.to(device)
-        self.tokenizer = tokenizer
-        self.device    = device
+        self.tokenizer         = tokenizer
+        self.device            = device
+        self.preprocessor      = EmotionTextPreprocessor() 
+        
         self.index2label = {
             0: "sadness",
             1: "joy",
@@ -56,6 +58,7 @@ class EmotionPredict:
 
     def predict(self, text):
         self.emotion_model.eval()
+        self.predict
         text = self.preprocessor.transform(text)
         inputs = self.tokenizer(
             text,

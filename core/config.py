@@ -5,13 +5,12 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # ── Model Paths ───────────────────────────────────────────
-    DPO_CHECKPOINT: str   = "E:\vs codes\gemma_model\Qwen2.5-0.5B-Instruct-DPO\checkpoint-1185"
-    EMOTION_MODEL: str    = ""
-    LANGUAGE_MODEL: str   = ""
-    DENSE_ENCODER: str    = ""
-    SPARSE_ENCODER: str   = ""
-    CROSS_ENCODER: str    = ""
-    TRANSLATOR_MODEL: str = ""
+    EMOTION_MODEL: str    = "checkpoints/best_model_albert.pth"
+    LANGUAGE_MODEL: str   = "checkpoints/language_classifier"
+    DENSE_ENCODER: str    = "checkpoints/embedding/dense_encoder_model"
+    SPARSE_ENCODER: str   = "checkpoints/embedding/sparse_encoder_model.json"
+    CROSS_ENCODER: str    = "checkpoints/embedding/cross_encoder_model"
+    TRANSLATOR_MODEL: str = "checkpoints/many_to_one_translator"
 
     # ── LLM Keys ──────────────────────────────────────────────
     GROQ_API_KEY: str = ""

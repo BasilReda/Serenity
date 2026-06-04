@@ -32,6 +32,7 @@ def translate_to_english_node(state: ChatbotState) -> dict:
     print("--> [NODE] Executing: translate_to_english_node")
     if state.get("detect_language","").strip().lower() != "english":
         translated = translate_to_english(state["user_input"])
+        print(f"Translated '{state['user_input']}' to '{translated}'")
         return {"translated_query": translated, "status_update": [f"Translated: {translated}"]}
     return {"translated_query": state["user_input"]}
 

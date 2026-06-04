@@ -7,13 +7,14 @@ from typing import Dict, Any
 from transformers import AutoTokenizer
 from .emotion import EmotionPredict,EmotionModel
 import torch
+import fasttext
 
 _lang_clf    = None
 
 def _get_emotion_clf():
 
-    emotion_tokenizer = AutoTokenizer.from_pretrained(settings.BERT_EMOTION_MODEL)
-    emotion_model     = EmotionModel(model_name = settings.BERT_EMOTION_MODEL)
+    emotion_tokenizer = AutoTokenizer.from_pretrained(settings.BERT_EMOTION_MODEL_NAME)
+    emotion_model     = EmotionModel(model_name = settings.BERT_EMOTION_MODEL_NAME)
     emotion_checkpoint = torch.load(settings.EMOTION_MODEL, map_location = settings.DEVICE, weights_only=False)
     emotion_model.load_state_dict(emotion_checkpoint["model_state_dict"])
 
@@ -33,15 +34,15 @@ def detect_emotion(text: str) -> Dict[str, Any]:
         return {"emotion": "neutral", "score": 1.0}
     emotion_model, emotion_tokenizer = _get_emotion_clf()
     predictor = EmotionPredict(emotion_model, emotion_tokenizer, device=settings.DEVICE)
-    result = predictor(text)
+    result = predictor.predict(text)
     return {"emotion": result["label"], "score": result["confidence"]}
 
 def detect_language(text: str) -> Dict[str, Any]:
     if not text or not text.strip():
         return {"language": "unknown", "score": 1.0}
-    # result = _get_lang_clf()(text)[0]
-    # return {"language": result["label"], "score": round(result["score"], 4)}
-    return {"language": "en", "score": 1.0}  # Placeholder: Assume English for now
+    result = _get_lang_clf()(text)[0]
+    return {"language": result["label"], "score": round(result["score"], 4)}
+
 
 class _IntentSchema(BaseModel):
     intent:     str   = Field(..., description="Detected intent.")
@@ -73,3 +74,9 @@ def intent_user(text: str) -> dict:
     except Exception as e:
         print(f"[INTENT] Parse failed: {e}")
         return {"intent": "out_of_scope", "confidence": 0.0}
+    
+if __name__ == "__main__":
+    test_text = "Hi there! I'm feeling a bit down lately. Can you help?"
+    print("Emotion Detection Result:", detect_emotion(test_text))
+    print("Language Detection Result:", detect_language(test_text))
+    print("Intent Detection Result:", intent_user(test_text))

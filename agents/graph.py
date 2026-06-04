@@ -134,24 +134,24 @@ if __name__ == "__main__":
 
         print("\n[Graph Execution Path]")
         
+        bot_reply = None  # To hold the response when it shows up
+        
         try:
-            # .stream() allows us to watch the state move from node to node
             for output in chatbot_app.stream(inputs, config=config):
                 for node_name, state_change in output.items():
                     print(f" 🟢 -> {node_name}")
                     
-                    # Optional: Print specific state changes here if you want to inspect them
-                    # if "detected_emotion" in state_change:
-                    #     print(f"      Emotion: {state_change['detected_emotion']}")
+                    # Capture the response immediately when the node outputs it!
+                    if "final_response" in state_change and state_change["final_response"]:
+                        bot_reply = state_change["final_response"]
 
-            # After the stream finishes, fetch the final state to get the bot's response
-            final_state = chatbot_app.get_state(config).values
-            
-            # NOTE: Change "final_response" to whatever key your output_guardrail saves the text into
-            bot_reply = final_state.get("final_response", "[No 'final_response' found in state]")
+            # Fallback if it wasn't caught in the stream loop
+            if not bot_reply:
+                final_state = chatbot_app.get_state(config).values
+                bot_reply = final_state.get("final_response", "[No 'final_response' found in state]")
+                
             print(f"\nBot: {bot_reply}")
 
         except Exception as e:
             print(f"\n❌ [ERROR] Graph execution failed: {str(e)}")
-            # Raise the error so you can see the full traceback and fix the bug
             raise e
