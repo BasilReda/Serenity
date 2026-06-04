@@ -2,10 +2,12 @@ from langgraph.graph import StateGraph, END, START
 from agents.state import RagState
 from agents.nodes import RoutingNodes, RetrievalNodes, OtherNodes, GenerationNodes
 from store import QdrantStore
+from langgraph.checkpoint.memory import InMemorySaver
 
 
 class RagGraph:
     def __init__(self):
+        self.checkpoint_saver = InMemorySaver()
         self.routing_nodes = RoutingNodes()
         self.retrieval_nodes = RetrievalNodes()
         self.other_nodes = OtherNodes()
@@ -50,7 +52,7 @@ class RagGraph:
         self.graph.add_edge("retrieve_relevant_docs", "generate_rag_answer")
         self.graph.add_edge("generate_rag_answer", END)
 
-        self.agent = self.graph.compile()
+        self.agent = self.graph.compile(checkpointer=self.checkpoint_saver)
 
     def get_agent(self):
         return self.agent
