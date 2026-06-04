@@ -153,6 +153,9 @@ cp .env.example .env
 Paths to local checkpoints can also be overridden via `.env`; defaults are defined in `core/config.py`.
 
 ### 4. Model artifacts
+All required pretrained checkpoints can be downloaded from Google Drive:
+
+📥 [Download Weights](https://drive.google.com/drive/folders/1DnM3ZyqUKKccfUii8EeX4j2WR5BnWOJ7?usp=sharing)
 
 Place trained or downloaded weights under `checkpoints/` (this directory is gitignored). Expected layout:
 
