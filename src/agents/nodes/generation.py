@@ -54,18 +54,24 @@ class GenerationNodes:
             ]
         )
 
+        print(current_question)
+        print("**" * 20)
+        print(history)
+
         final_rag_answer = (
             (messages | self.llm).invoke({"history": history}).content.strip()
         )
 
-        # 🔥 التعديل السحري هنا 🔥
-        # بنرجع فقط التحديثات الصافية، والـ Graph هيدمج الرسايل دي صح بدون تكرار
+        state["history"] = (
+            history
+            + [{"role": "human", "content": state["question"]}]
+            + [{"role": "ai", "content": final_rag_answer}]
+        )
+
         return {
             "answer": final_rag_answer,
-            "history": [
-                HumanMessage(content=state["question"]),
-                AIMessage(content=final_rag_answer),
-            ],
+            "history": state["history"],
+            "translated_question": None,
         }
 
     def generate_normal_answer(self, state: RagState):
@@ -101,16 +107,22 @@ class GenerationNodes:
                 ),
             ]
         )
+        print(current_question)
+        print("**" * 20)
+        print(history)
 
         normal_response = (
             (prompt | self.llm).invoke({"history": history}).content.strip()
         )
 
-        # 🔥 التعديل السحري هنا أيضاً 🔥
+        state["history"] = (
+            history
+            + [{"role": "human", "content": state["question"]}]
+            + [{"role": "ai", "content": normal_response}]
+        )
+
         return {
             "answer": normal_response,
-            "history": [
-                HumanMessage(content=state["question"]),
-                AIMessage(content=normal_response),
-            ],
+            "history": state["history"],
+            "translated_question": None,
         }
