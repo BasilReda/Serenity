@@ -134,7 +134,6 @@ body {
     padding: 14px 20px;
     font-size: 1rem;
     line-height: 1.6;
-    white-space: pre-wrap;
     letter-spacing: 0.2px;
 }
 
@@ -146,6 +145,7 @@ body {
     color: var(--user-msg-text);
     border-radius: 22px 22px 4px 22px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    white-space: pre-wrap;
 }
 
 .bot-message {
@@ -156,7 +156,74 @@ body {
     background-color: var(--bot-msg-bg);
     color: var(--text-main);
     padding-left: 0; 
+    direction: rtl; /* إجبار الاتجاه من اليمين للشمال */
+    text-align: right;
 }
+
+/* ==========================================================================
+   🔥 تحديثات الرندر الخاصة بالـ Markdown وعزل الشرط تماماً 🔥
+   ========================================================================== */
+
+/* تنسيق الفقرات العادية جوه رد البوت */
+.bot-message .message-content p {
+    margin-bottom: 12px;
+}
+.bot-message .message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* مسح فورمات القوائم الافتراضية للمتصفح منعاً لظهور أشكال مكسورة */
+.bot-message .message-content ul, 
+.bot-message .message-content ol {
+    margin: 14px 0;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    list-style: none !important;
+}
+
+/* بناء عناصر القائمة بشكل مخصص وبمسافة يمين بادئة للنقطة */
+.bot-message .message-content li {
+    position: relative;
+    padding-right: 22px !important;
+    padding-left: 0 !important;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    display: block !important;
+}
+
+/* رسم نقطة الـ Bullet المخصصة يمين الشاشة بالملي */
+.bot-message .message-content li::before {
+    content: "•" !important;
+    color: #9b51e0; /* لون بنفسجي فخم */
+    font-weight: bold;
+    font-size: 1.3rem;
+    position: absolute;
+    right: 4px;
+    top: -2px;
+}
+
+/* ستايل مخصص للنصوص العريضة (Bold) */
+.bot-message .message-content strong {
+    color: #ffffff;
+    font-weight: 600;
+    background: linear-gradient(120deg, rgba(102, 166, 255, 0.12) 0%, rgba(189, 126, 255, 0.12) 100%);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* الـ Headers الفرعية */
+.bot-message .message-content h1,
+.bot-message .message-content h2,
+.bot-message .message-content h3 {
+    color: #ffffff;
+    margin: 18px 0 10px 0;
+    font-weight: 600;
+}
+.bot-message .message-content h3 {
+    font-size: 1.15rem;
+}
+
+/* ========================================================================== */
 
 .pipeline-status-bar {
     padding: 12px 30px;
